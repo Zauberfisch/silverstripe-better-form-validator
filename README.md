@@ -16,67 +16,69 @@ provided by SilverStripe.
 
 ## Usage
 
-	$fields = new FieldList([
-		new TextField('Name', _t('MyForm.Name', 'Name')),
-		new CheckboxField('CallMe', _t('MyForm.CallMe', 'Do you want us to call you on your phone number?')),
-		new TextField('Phone', _t('MyForm.Phone', 'Phone')),
-		new EmailField('Email', _t('MyForm.Email', 'Email')),
-		new TextareaField('Message', _t('MyForm.Message', 'Message')),
-	]);
-	
-	$actions = new FieldList([
-		new FormAction('SubmitMyForm', _t('MyForm.Submit', 'Submit')),
-	]);
+```php
+$fields = new FieldList([
+	new TextField('Name', _t('MyForm.Name', 'Name')),
+	new CheckboxField('CallMe', _t('MyForm.CallMe', 'Do you want us to call you on your phone number?')),
+	new TextField('Phone', _t('MyForm.Phone', 'Phone')),
+	new EmailField('Email', _t('MyForm.Email', 'Email')),
+	new TextareaField('Message', _t('MyForm.Message', 'Message')),
+]);
 
-	$validateCallback = function ($data, Form $form, LambdaValidator $validator) {
-		// using $valid is currently optional because a form is automatically 
-		// considered invalid if there are any error messages 
-		$valid = true;
+$actions = new FieldList([
+	new FormAction('SubmitMyForm', _t('MyForm.Submit', 'Submit')),
+]);
 
-		if (isset($data['CallMe']) && $data['CallMe']) {
-			// if the call me checkbox is ticked, then a phone number is required
-			if ($validator->requireField('Phone')) {
-				$valid = false;
-			}
-			// requireField will automatically add an error message to the form and set it as invalid
+$validateCallback = function ($data, Form $form, LambdaValidator $validator) {
+	// using $valid is currently optional because a form is automatically 
+	// considered invalid if there are any error messages 
+	$valid = true;
+
+	if (isset($data['CallMe']) && $data['CallMe']) {
+		// if the call me checkbox is ticked, then a phone number is required
+		if ($validator->requireField('Phone')) {
+			$valid = false;
 		}
+		// requireField will automatically add an error message to the form and set it as invalid
+	}
 
-		if (isset($data['Message'])) {
-			// Message is automatically required, but this code will still run even if its not set
-			// so we have to check that it's set
-			if (stripos($data['Message'], 'viagra') !== false && stripos($data['Message'], 'cheap')) {
-				$valid = false;
-				$validator->validationError(
-					// fieldName
-					'Message', 
-					// message
-					_t(
-						'MyForm.NoViagra',
-						'Sorry, but we are currently not looking for cheap Viagra'
-					),
-					// message type and css class
-					'required' 
-				);
-			}
+	if (isset($data['Message'])) {
+		// Message is automatically required, but this code will still run even if its not set
+		// so we have to check that it's set
+		if (stripos($data['Message'], 'viagra') !== false && stripos($data['Message'], 'cheap')) {
+			$valid = false;
+			$validator->validationError(
+				// fieldName
+				'Message', 
+				// message
+				_t(
+					'MyForm.NoViagra',
+					'Sorry, but we are currently not looking for cheap Viagra'
+				),
+				// message type and css class
+				'required' 
+			);
 		}
+	}
 
-		return $valid;
-	};
+	return $valid;
+};
 
-	$validator = new LambdaValidator(
-		// Parameter 1 - php callable to perform custom validation
-		$validateCallback, 
-		// Parameter 2 - boolean or array|FieldList of fields to validate
-		// In this case boolean true to automatically validate all fields
-		// Validate means check for correct value for a type, eg EmailField 
-		// is valid if its empty or if a valid email address is entered
-		true,  
-		// Parameter 3 - boolean or array|FieldList of fields that are required (can not be empty)
-		['Name', 'Email', 'Message']
-	);
+$validator = new LambdaValidator(
+	// Parameter 1 - php callable to perform custom validation
+	$validateCallback, 
+	// Parameter 2 - boolean or array|FieldList of fields to validate
+	// In this case boolean true to automatically validate all fields
+	// Validate means check for correct value for a type, eg EmailField 
+	// is valid if its empty or if a valid email address is entered
+	true,  
+	// Parameter 3 - boolean or array|FieldList of fields that are required (can not be empty)
+	['Name', 'Email', 'Message']
+);
 
-	// the above code can be in your own Form subclass or used in combination with the line below
-	$form = new Form($controller, $name, $fields, $actions, $validator);
+// the above code can be in your own Form subclass or used in combination with the line below
+$form = new Form($controller, $name, $fields, $actions, $validator);
+```
 
 ## License
 
