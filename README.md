@@ -36,7 +36,7 @@ $validateCallback = function ($data, Form $form, LambdaValidator $validator) {
 
 	if (isset($data['CallMe']) && $data['CallMe']) {
 		// if the call me checkbox is ticked, then a phone number is required
-		if ($validator->requireField('Phone')) {
+		if (!$validator->requireField('Phone')) {
 			$valid = false;
 		}
 		// requireField will automatically add an error message to the form and set it as invalid
@@ -72,7 +72,7 @@ $validator = new LambdaValidator(
 	// Validate means check for correct value for a type, eg EmailField 
 	// is valid if its empty or if a valid email address is entered
 	true,  
-	// Parameter 3 - boolean or array|FieldList of fields that are required (can not be empty)
+	// Parameter 3 - boolean or array|FieldList of fields that are required (field can not be empty)
 	['Name', 'Email', 'Message']
 );
 
